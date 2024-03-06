@@ -15,4 +15,4 @@ conform.setup({
 		-- is found
 		-- javascript = { { "prettierd", "prettier" } },
 	},
-}
+})

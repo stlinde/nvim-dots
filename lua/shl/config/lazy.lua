@@ -30,6 +30,7 @@ local plugins = {
 	require('shl.plugins.lint'),
 	require('shl.plugins.statusline'),
 	require('shl.plugins.neogit'),
+	require('shl.plugins.neorg'),
 
 	-- Telescope
 	{
