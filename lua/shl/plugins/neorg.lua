@@ -1,6 +1,7 @@
 -- [[ Install ]]
 local M = { 'nvim-neorg/neorg' }
-M.event = 'VeryLazy'
+-- M.event = 'VimEnter'
+M.lazy = false
 M.build = ':Neorg sync-parsers'
 M.dependencies = {
 	'nvim-lua/plenary.nvim',
