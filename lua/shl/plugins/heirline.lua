@@ -1,9 +1,3 @@
-local heirline_status, heirline = pcall(require, 'heirline')
-if not heirline_status_ok then
-	print("heirline not installed")
-end
-
-
 local heirline = require("heirline")
 local conditions = require("heirline.conditions")
 local utils = require("heirline.utils")
@@ -14,10 +8,10 @@ local icons = {
 	lsp = " ", --   
 	vim = " ",
 	debug = " ",
-	err = vim.fn.sign_getdefined("DiagnosticSignError")[1].text,
-	warn = vim.fn.sign_getdefined("DiagnosticSignWarn")[1].text,
-	info = vim.fn.sign_getdefined("DiagnosticSignInfo")[1].text,
-	hint = vim.fn.sign_getdefined("DiagnosticSignHint")[1].text,
+	-- err = vim.fn.sign_getdefined("DiagnosticSignError")[1].text,
+	-- warn = vim.fn.sign_getdefined("DiagnosticSignWarn")[1].text,
+	-- info = vim.fn.sign_getdefined("DiagnosticSignInfo")[1].text,
+	-- hint = vim.fn.sign_getdefined("DiagnosticSignHint")[1].text,
 }
 local separators = {
 	rounded_left = "",
@@ -41,7 +35,7 @@ local separators = {
 	dotted_vert = "┊",
 }
 
-local colors = require("tokyonight.colors").setup({ transform = true })
+local colors = require("catppuccin.utils.colors")
 
 conditions.buffer_not_empty = function()
 	return vim.fn.empty(vim.fn.expand("%:t")) ~= 1
@@ -336,51 +330,51 @@ local Formatters = {
 	end,
 }
 
-local Diagnostics = {
-	condition = function()
-		return conditions.buffer_not_empty() and conditions.hide_in_width() and conditions.has_diagnostics()
-	end,
-	static = {
-		error_icon = vim.fn.sign_getdefined("DiagnosticSignError")[1].text,
-		warn_icon = vim.fn.sign_getdefined("DiagnosticSignWarn")[1].text,
-		info_icon = vim.fn.sign_getdefined("DiagnosticSignInfo")[1].text,
-		hint_icon = vim.fn.sign_getdefined("DiagnosticSignHint")[1].text,
-	},
-	init = function(self)
-		self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
-		self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
-		self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
-		self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
-	end,
-	update = { "DiagnosticChanged", "BufEnter" },
-	hl = { bg = colors.crust },
-	Space,
-	{
-		provider = function(self)
-			return self.errors > 0 and ("%s%s "):format(self.error_icon, self.errors)
-		end,
-		hl = { fg = colors.red },
-	},
-	{
-		provider = function(self)
-			return self.warnings > 0 and ("%s%s "):format(self.warn_icon, self.warnings)
-		end,
-		hl = { fg = colors.yellow },
-	},
-	{
-		provider = function(self)
-			return self.info > 0 and ("%s%s "):format(self.info_icon, self.info)
-		end,
-		hl = { fg = colors.sapphire },
-	},
-	{
-		provider = function(self)
-			return self.hints > 0 and ("%s%s "):format(self.hint_icon, self.hints)
-		end,
-		hl = { fg = colors.sky },
-	},
-	Space,
-}
+-- local Diagnostics = {
+-- 	condition = function()
+-- 		return conditions.buffer_not_empty() and conditions.hide_in_width() and conditions.has_diagnostics()
+-- 	end,
+-- 	static = {
+-- 		error_icon = vim.fn.sign_getdefined("DiagnosticSignError")[1].text,
+-- 		warn_icon = vim.fn.sign_getdefined("DiagnosticSignWarn")[1].text,
+-- 		info_icon = vim.fn.sign_getdefined("DiagnosticSignInfo")[1].text,
+-- 		hint_icon = vim.fn.sign_getdefined("DiagnosticSignHint")[1].text,
+-- 	},
+-- 	init = function(self)
+-- 		self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+-- 		self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
+-- 		self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
+-- 		self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
+-- 	end,
+-- 	update = { "DiagnosticChanged", "BufEnter" },
+-- 	hl = { bg = colors.crust },
+-- 	Space,
+-- 	{
+-- 		provider = function(self)
+-- 			return self.errors > 0 and ("%s%s "):format(self.error_icon, self.errors)
+-- 		end,
+-- 		hl = { fg = colors.red },
+-- 	},
+-- 	{
+-- 		provider = function(self)
+-- 			return self.warnings > 0 and ("%s%s "):format(self.warn_icon, self.warnings)
+-- 		end,
+-- 		hl = { fg = colors.yellow },
+-- 	},
+-- 	{
+-- 		provider = function(self)
+-- 			return self.info > 0 and ("%s%s "):format(self.info_icon, self.info)
+-- 		end,
+-- 		hl = { fg = colors.sapphire },
+-- 	},
+-- 	{
+-- 		provider = function(self)
+-- 			return self.hints > 0 and ("%s%s "):format(self.hint_icon, self.hints)
+-- 		end,
+-- 		hl = { fg = colors.sky },
+-- 	},
+-- 	Space,
+-- }
 
 local Git = {
 	condition = conditions.is_git_repo,
@@ -717,24 +711,24 @@ local TabLineOffset = {
 	end,
 }
 
-vim.api.nvim_create_autocmd({ "VimEnter", "UIEnter", "BufAdd", "BufDelete" }, {
-	callback = function(args)
-		local counts = {}
-		local dupes = {}
-		local names = vim.tbl_map(function(bufnr)
-			return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":t")
-		end, get_bufs())
-		for _, name in ipairs(names) do
-			counts[name] = (counts[name] or 0) + 1
-		end
-		for name, count in pairs(counts) do
-			if count > 1 then
-				dupes[name] = true
-			end
-		end
-		require("heirline").tabline.dupes = dupes
-	end,
-})
+-- vim.api.nvim_create_autocmd({ "VimEnter", "UIEnter", "BufAdd", "BufDelete" }, {
+-- 	callback = function(args)
+-- 		local counts = {}
+-- 		local dupes = {}
+-- 		local names = vim.tbl_map(function(bufnr)
+-- 			return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":t")
+-- 		end, get_bufs())
+-- 		for _, name in ipairs(names) do
+-- 			counts[name] = (counts[name] or 0) + 1
+-- 		end
+-- 		for name, count in pairs(counts) do
+-- 			if count > 1 then
+-- 				dupes[name] = true
+-- 			end
+-- 		end
+-- 		require("heirline").tabline.dupes = dupes
+-- 	end,
+-- })
 
 local TabLine = {
 	TabLineOffset,
@@ -756,7 +750,7 @@ heirline.setup({
 		LSPActive,
 		Linters,
 		Formatters,
-		Diagnostics,
+		-- Diagnostics,
 		Git,
 	},
 	-- tabline = TabLine,

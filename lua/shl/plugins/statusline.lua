@@ -1,68 +1,229 @@
+-- Plugin configuration: lualine.nvim ------------------------------------------------------
+
+--------------------------------------------------------------------------------------------
+-- Local Variables                                                                        --
+--------------------------------------------------------------------------------------------
+
+-- Table to map the current mode into characters to be shown at the bar.
+local vim_mode_map = {
+  ["n"]     = " N ",
+  ["no"]    = " O ",
+  ["nov"]   = " O ",
+  ["noV"]   = " O ",
+  ["no\22"] = " O ",
+  ["niI"]   = " N ",
+  ["niR"]   = " N ",
+  ["niV"]   = " N ",
+  ["nt"]    = " N ",
+  ["ntT"]   = " N ",
+  ["v"]     = " V ",
+  ["vs"]    = " V ",
+  ["V"]     = "VL ",
+  ["Vs"]    = "VL ",
+  ["\22"]   = "VB ",
+  ["\22s"]  = "VB ",
+  ["s"]     = " S ",
+  ["S"]     = "SL ",
+  ["\19"]   = "SB ",
+  ["i"]     = " I ",
+  ["ic"]    = " I ",
+  ["ix"]    = " I ",
+  ["R"]     = " R ",
+  ["Rc"]    = " R ",
+  ["Rx"]    = " R ",
+  ["Rv"]    = "VR ",
+  ["Rvc"]   = "VR ",
+  ["Rvx"]   = "VR ",
+  ["c"]     = "CMD",
+  ["cv"]    = "EX ",
+  ["ce"]    = "EX ",
+  ["r"]     = " R ",
+  ["rm"]    = " M ",
+  ["r?"]    = " C ",
+  ["!"]     = " S ",
+  ["t"]     = " T ",
+}
+
+--------------------------------------------------------------------------------------------
+-- Local Functions                                                                        --
+--------------------------------------------------------------------------------------------
+
+-- Return the lines and characters selected by the visual mode.
+local function get_visual_selection_information()
+	local is_visual_mode = vim.fn.mode():find("[Vv]")
+	if not is_visual_mode then return "" end
+
+	local start_line = vim.fn.line("v")
+	local end_line = vim.fn.line(".")
+	local lines = start_line <= end_line and end_line - start_line + 1 or start_line - end_line + 1
+
+	return "[" .. tostring(lines) .. "L " .. tostring(vim.fn.wordcount().visual_chars) .. "C]"
+end
+
+-- Return the current mode.
+local function get_vim_mode_text()
+  local mode_code = vim.api.nvim_get_mode().mode
+  if vim_mode_map[mode_code] == nil then
+    return mode_code
+  end
+
+  return vim_mode_map[mode_code]
+end
+
+-- Show the macro recording information.
+local function show_macro_recording()
+  local recording_register = vim.fn.reg_recording()
+  if recording_register == "" then
+    return ""
+  else
+    return "● " .. recording_register
+  end
+end
+
+-- Show the tab indicator.
+local function show_tab_indicator()
+  local num_tabs = vim.fn.tabpagenr("$")
+
+  if num_tabs <= 1 then
+    return  ""
+  end
+
+  local current_tab = vim.fn.tabpagenr()
+  return "[" .. tostring(current_tab) .. " / " .. tostring(num_tabs) .. "]"
+end
+
+--------------------------------------------------------------------------------------------
+-- Plugin Configuration                                                                   --
+--------------------------------------------------------------------------------------------
+
 return {
   "nvim-lualine/lualine.nvim",
   event = "VeryLazy",
-  init = function()
-		-- Bubbles config for lualine
-		-- Author: lokesh-krishna
-		-- MIT license, see LICENSE for more details.
 
-		-- stylua: ignore
-		local colors = {
-			blue   = '#80a0ff',
-			cyan   = '#79dac8',
-			black  = '#080808',
-			white  = '#c6c6c6',
-			red    = '#ff5189',
-			violet = '#d183e8',
-			grey   = '#303030',
-		}
+  opts = {
 
-		local bubbles_theme = {
-			normal = {
-				a = { fg = colors.black, bg = colors.violet },
-				b = { fg = colors.white, bg = colors.grey },
-				c = { fg = colors.white },
-			},
+    options = {
+      -- Filetypes in which we will hide the bar.
+      disabled_filetypes = {
+        "alpha",
+        "dashboard",
+        "neo-tree",
+        "noice",
+        "starter",
+      },
+      component_separators = { left = "", right = "" },
+      section_separators = { left = "", right = "" },
+      theme = "catppuccin",
+    },
 
-			insert = { a = { fg = colors.black, bg = colors.blue } },
-			visual = { a = { fg = colors.black, bg = colors.cyan } },
-			replace = { a = { fg = colors.black, bg = colors.red } },
+    -- The status bar will show only the buffer list.
+    sections = {
+      lualine_a = {},
+      lualine_b = {
+        {
+          "buffers",
+          mode = 0,
+          symbols = {
+            alternate_file = "",
+            modified = " [+]",
+          }
+        }
+      },
+      lualine_c = {},
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {},
+    },
 
-			inactive = {
-				a = { fg = colors.white, bg = colors.black },
-				b = { fg = colors.white, bg = colors.black },
-				c = { fg = colors.white },
-			},
-		}
+    -- Set the winbar sections.
+    winbar = {
+      lualine_a = {
+        {
+          "vim_mode",
+          fmt = get_vim_mode_text,
+        }
+      },
 
-		require('lualine').setup {
-			options = {
-				theme = bubbles_theme,
-				component_separators = '',
-				section_separators = { left = '', right = '' },
-			},
-			sections = {
-				lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
-				lualine_b = { 'filename', 'branch' },
-				lualine_c = {
-					'%=', --[[ add your center compoentnts here in place of this comment ]]
-				},
-				lualine_x = {},
-				lualine_y = { 'filetype', 'progress' },
-				lualine_z = {
-					{ 'location', separator = { right = '' }, left_padding = 2 },
-				},
-			},
-			inactive_sections = {
-				lualine_a = { 'filename' },
-				lualine_b = {},
-				lualine_c = {},
-				lualine_x = {},
-				lualine_y = {},
-				lualine_z = { 'location' },
-			},
-			tabline = {},
-			extensions = {},
-		}
-	end,
+      lualine_b = {
+        { "macro", fmt = show_macro_recording, },
+        { "filetype", color = { gui = "bold" } },
+        { "filename" },
+      },
+
+      lualine_c = {
+        {
+          "branch",
+        }
+      },
+
+      lualine_x = {
+        {
+          "visual_selection",
+          fmt = get_visual_selection_information,
+        }
+      },
+
+      lualine_y = {
+        -- This component is necessary to allow Neovide to keep the winbar fixed while
+        -- scrolling with smooth scroll enabled.
+        {
+          "spacer",
+          color = "WinBar",
+          fmt = function ()
+            return " "
+          end
+        },
+        {
+          "progress",
+        },
+        {
+          "location",
+        },
+        {
+          "current_tab",
+          fmt = show_tab_indicator,
+        },
+      },
+
+      lualine_z = {},
+    },
+
+    inactive_winbar = {
+      lualine_a = {
+        {
+          "inactive_mode",
+          fmt = function()
+            return "   "
+          end
+        }
+      },
+
+      lualine_b = {
+        { "filetype", color = { gui = "bold" } },
+        { "filename" },
+      },
+
+      lualine_c = {
+        {
+          "branch",
+        }
+      },
+
+      lualine_x = {},
+
+      lualine_y = {},
+
+      lualine_z = {
+        -- This component is necessary to allow Neovide to keep the winbar fixed while
+        -- scrolling with smooth scroll enabled.
+        {
+          "spacer",
+          color = "WinBar",
+          fmt = function ()
+            return " "
+          end
+        },
+      },
+    },
+  },
 }

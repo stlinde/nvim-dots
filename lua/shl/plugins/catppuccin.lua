@@ -42,14 +42,19 @@ function M.config()
 		integrations = {
 			cmp = true,
 			gitsigns = true,
-			nvimtree = true,
 			treesitter = true,
-			notify = false,
+			noice = true,
+			neogit = true,
+			notify = true,
 			mini = {
 				enabled = true,
 				indentscope_color = "",
 			},
-			-- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+			telescope = {
+				enabled = true,
+				style = "nvchad",
+			},
+			which_key = true,
 		},
 	})
 

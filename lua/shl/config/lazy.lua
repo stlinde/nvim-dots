@@ -19,7 +19,6 @@ local plugins = {
 	require('shl.plugins.lsp'),
 	require('shl.plugins.completion'),
 	require('shl.plugins.lint'),
-	require('shl.plugins.statusline'),
 	require('shl.plugins.neogit'),
 	require('shl.plugins.neorg'),
 
@@ -101,18 +100,18 @@ local plugins = {
 	},
 
 	-- Heirline
-	-- {
-	-- 	'rebelot/heirline.nvim',
-	-- 	lazy = false,
-	-- 	dependencies = {
-	-- 		'nvim-tree/nvim-web-devicons',
-	-- 		'neovim/nvim-lspconfig',
-	-- 		'mfussenegger/nvim-lint',
-	-- 	},
-	-- 	config = function()
-	-- 		require('shl.plugins.heirline')
-	-- 	end,
-	-- },
+	{
+		'rebelot/heirline.nvim',
+		lazy = false,
+		dependencies = {
+			'nvim-tree/nvim-web-devicons',
+			'neovim/nvim-lspconfig',
+			'mfussenegger/nvim-lint',
+		},
+		config = function()
+			require('shl.plugins.heirline')
+		end,
+	},
 
 	-- Dashboard
 	{
