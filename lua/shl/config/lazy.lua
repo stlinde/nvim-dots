@@ -15,16 +15,7 @@ vim.opt.rtp:prepend(lazypath)
 -- [[ Plugin Spec ]]
 local plugins = {
 	-- UI
-	{
-		'folke/tokyonight.nvim',
-		lazy = false,
-		priority = 1000,
-		config = function()
-			require('shl.plugins.tokyonight')
-			vim.cmd('colorscheme tokyonight')
-		end,
-	},
-
+	require('shl.plugins.catppuccin'),
 	require('shl.plugins.lsp'),
 	require('shl.plugins.completion'),
 	require('shl.plugins.lint'),
