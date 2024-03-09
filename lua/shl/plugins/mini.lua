@@ -1,19 +1,28 @@
--- [[ MiniFiles ]]
-local files_status, files = pcall(require, 'mini.files')
-files.setup()
+-- [[ Install ]]
+local M = { 'echasnovski/mini.nvim' }
+M.version = false
 
--- [[ MiniBufremove ]]
-local bufremove_status, bufremove = pcall(require, 'mini.bufremove')
-bufremove.setup()
+-- [[ Config ]]
+function M.config()
+	-- [[ MiniFiles ]]
+	local files_status, files = pcall(require, 'mini.files')
+	files.setup()
 
--- [[ MiniComment ]]
-local comment_status, comment = pcall(require, 'mini.comment')
-comment.setup()
+	-- [[ MiniBufremove ]]
+	local bufremove_status, bufremove = pcall(require, 'mini.bufremove')
+	bufremove.setup()
 
--- [[ MiniSurround ]]
-local surround_status, surround = pcall(require, 'mini.surround')
-surround.setup()
+	-- [[ MiniComment ]]
+	local comment_status, comment = pcall(require, 'mini.comment')
+	comment.setup()
 
--- [[ MiniAi ]]
-local ai_status, ai = pcall(require, 'mini.ai')
-ai.setup()
+	-- [[ MiniSurround ]]
+	local surround_status, surround = pcall(require, 'mini.surround')
+	surround.setup()
+
+	-- [[ MiniAi ]]
+	local ai_status, ai = pcall(require, 'mini.ai')
+	ai.setup()
+end
+
+return M

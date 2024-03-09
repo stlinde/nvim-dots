@@ -14,34 +14,15 @@ vim.opt.rtp:prepend(lazypath)
 
 -- [[ Plugin Spec ]]
 local plugins = {
-	-- UI
 	require('shl.plugins.catppuccin'),
 	require('shl.plugins.lsp'),
 	require('shl.plugins.completion'),
 	require('shl.plugins.lint'),
 	require('shl.plugins.neogit'),
 	require('shl.plugins.neorg'),
+	require('shl.plugins.telescope'),
+	require('shl.plugins.mini'),
 
-	-- Telescope
-	{
-		'nvim-telescope/telescope.nvim',
-		event = 'VimEnter',
-		branch = '0.1.x',
-		dependencies = {
-			'nvim-lua/plenary.nvim',
-			'nvim-telescope/telescope-ui-select.nvim',
-			{
-				'nvim-telescope/telescope-fzf-native.nvim',
-				build = 'make', -- run make when plugin is installed/updated
-				cond = function()
-					return vim.fn.executable 'make' == 1
-				end,
-			},
-		},
-		config = function()
-			require('shl.plugins.telescope')
-		end,
-	},
 
 	-- Nvim Coding
 	{
@@ -51,15 +32,6 @@ local plugins = {
 	{
 		'folke/neodev.nvim',
 		event = 'VeryLazy',
-	},
-
-	-- Mini
-	{
-		'echasnovski/mini.nvim',
-		version = false,
-		config = function()
-			require('shl.plugins.mini')
-		end,
 	},
 
 	-- Treesitter
